@@ -1,18 +1,6 @@
-from dotenv import load_dotenv
-import os
+```python
 import streamlit as st
 from langchain_groq import ChatGroq
-
-# Load the environment variables
-load_dotenv()
-
-# Get Groq API key
-api_key = os.getenv("GROQ_API_KEY")
-
-# Check API key
-if not api_key:
-    st.error("GROQ_API_KEY not found. Please check your .env file.")
-    st.stop()
 
 # Streamlit page setup
 st.set_page_config(
@@ -23,6 +11,13 @@ st.set_page_config(
 
 st.title("💬 Generative AI Chatbot")
 
+# Get Groq API key
+try:
+    api_key = st.secrets["GROQ_API_KEY"]
+except Exception:
+    st.error("GROQ_API_KEY not found. Please add it in Streamlit Secrets.")
+    st.stop()
+
 # Initiate chat history
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
@@ -32,9 +27,9 @@ for message in st.session_state.chat_history:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# LLM initiate
+# Initialize Groq LLM
 llm = ChatGroq(
-    model="llama-3.3-70b-versatile",
+    model="openai/gpt-oss-120b",
     temperature=0.0,
     api_key=api_key,
 )
@@ -61,7 +56,7 @@ if user_prompt:
         [
             {
                 "role": "system",
-                "content": "You are a helpful assistant",
+                "content": "You are a helpful assistant.",
             },
             *st.session_state.chat_history,
         ]
@@ -80,3 +75,4 @@ if user_prompt:
     # Show assistant response
     with st.chat_message("assistant"):
         st.markdown(assistant_response)
+```

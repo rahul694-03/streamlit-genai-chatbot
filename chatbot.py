@@ -96,4 +96,5 @@ if user_prompt:
     # Display assistant response
     with st.chat_message("assistant"):
         st.markdown(assistant_response)
-```
+
+
